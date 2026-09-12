@@ -1,0 +1,1 @@
+const express=require('express'); const c=require('../controllers/moduleController'); module.exports=({auth,admin})=>{const r=express.Router();r.get('/',auth,c.getModules);r.get('/:id',auth,c.getModuleById);r.post('/',auth,admin,c.createModule);r.put('/:id',auth,admin,c.updateModule);r.delete('/:id',auth,admin,c.deleteModule);return r;};

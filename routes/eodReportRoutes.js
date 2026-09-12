@@ -1,0 +1,1 @@
+const express=require('express'); const c=require('../controllers/eodReportController'); module.exports=({auth,admin})=>{const r=express.Router();r.get('/',auth,c.getEODReports);r.get('/:id',auth,c.getEODReportById);r.post('/',auth,c.createEODReport);r.put('/:id',auth,c.updateEODReport);r.delete('/:id',auth,c.deleteEODReport);return r;};

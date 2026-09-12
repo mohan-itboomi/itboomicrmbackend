@@ -1,0 +1,10 @@
+const service=require('../services/authService');
+const login=async(req,res,next)=>{try{res.json({success:true,message:'Login successful',data:await service.login(req.body.email,req.body.password)});}catch(e){if(e.status)return res.status(e.status).json({success:false,message:e.message});next(e);}};
+const getMe=async(req,res,next)=>{try{res.json({success:true,data:await service.getCurrentUser(req.user._id)});}catch(e){next(e);}};
+const handle=action=>async(req,res,next)=>{try{res.json({success:true,data:await action(req)});}catch(e){if(e.status)return res.status(e.status).json({success:false,message:e.message});next(e);}};
+const refresh=handle(req=>service.refresh(req.body.refreshToken));
+const logout=handle(async req=>{await service.logout(req.user._id);return null;});
+const changePassword=handle(async req=>{await service.changePassword(req.user._id,req.body.currentPassword,req.body.newPassword);return null;});
+const forgotPassword=async(req,res,next)=>{try{const token=await service.forgotPassword(req.body.email);const data={message:'If the account exists, reset instructions have been created'};if(token&&process.env.NODE_ENV!=='production')data.resetToken=token;res.json({success:true,data});}catch(e){next(e);}};
+const resetPassword=handle(async req=>{await service.resetPassword(req.body.token,req.body.newPassword);return null;});
+module.exports={login,getMe,refresh,logout,changePassword,forgotPassword,resetPassword};

@@ -1,0 +1,1 @@
+const express=require('express'); const c=require('../controllers/auditLogController'); module.exports=({auth,admin})=>{const r=express.Router();r.get('/',auth,c.getAuditLogs);r.get('/:id',auth,c.getAuditLogById);r.post('/',auth,admin,c.createAuditLog);r.put('/:id',auth,admin,c.updateAuditLog);r.delete('/:id',auth,admin,c.deleteAuditLog);return r;};

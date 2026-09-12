@@ -1,0 +1,3 @@
+const express=require('express'); const c=require('../controllers/bugController'); const bugWrite=(req,res,next)=>['admin','tester','team-lead','project-coordinator'].includes(String(req.user?.role||'').toLowerCase())?next():res.status(403).json({success:false,message:'Bug write permission required'}); const bugCreate=(req,res,next)=>String(req.user?.role||'').toLowerCase()==='tester'?next():res.status(403).json({success:false,message:'Only testers can create bugs'}); module.exports=({auth,admin})=>{const r=express.Router();r.get('/',auth,c.getBugs);r.get('/:id',auth,c.getBugById);r.post('/',auth,bugCreate,c.createBug);r.put('/:id',auth,bugWrite,c.updateBug);r.delete('/:id',auth,admin,c.deleteBug);return r;};
+
+

@@ -1,0 +1,1 @@
+const express=require('express'); const c=require('../controllers/commentController'); module.exports=({auth,admin})=>{const r=express.Router();r.get('/',auth,c.getComments);r.get('/:id',auth,c.getCommentById);r.post('/',auth,c.createComment);r.put('/:id',auth,c.updateComment);r.delete('/:id',auth,c.deleteComment);return r;};

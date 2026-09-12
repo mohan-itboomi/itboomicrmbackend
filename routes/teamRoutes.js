@@ -1,0 +1,2 @@
+const express=require('express'); const c=require('../controllers/teamController');
+module.exports=({auth,admin})=>{const r=express.Router();r.get('/',auth,c.getTeams);r.get('/:id',auth,c.getTeamById);r.post('/',auth,admin,c.createTeam);r.put('/:id',auth,admin,c.updateTeam);r.post('/:id/members',auth,admin,c.addMember);r.delete('/:id/members/:userId',auth,admin,c.removeMember);r.patch('/:id/lead',auth,admin,c.assignLead);r.delete('/:id',auth,admin,c.deleteTeam);return r;};
