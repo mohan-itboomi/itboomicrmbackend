@@ -17,7 +17,12 @@ cloudinary.config({
 const uploadToCloudinary = (file) =>
   new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: "office-crm/frd", resource_type: "auto" },
+      {
+        folder: "office-crm/frd",
+        resource_type: "image",
+        type: "upload",
+        access_mode: "public",
+      },
       (error, result) => (error ? reject(error) : resolve(result)),
     );
     stream.end(file.buffer);
