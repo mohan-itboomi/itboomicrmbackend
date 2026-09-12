@@ -114,6 +114,7 @@ const complete = async (employeeId, taskId, completedDescription, challengesNote
     const completedAt = new Date();
     await Task.findByIdAndUpdate(taskId, { status: 'Completed', completionPercentage: 100, completedDescription, challengesNotes, completedAt });
     await Bug.updateMany({ taskId }, { $set: { completedAt, status: 'Fixed' } });
+    await recalculateProgress(task.projectId);
     return { task, session: null };
   }
   const now = new Date();
@@ -134,6 +135,7 @@ const complete = async (employeeId, taskId, completedDescription, challengesNote
   await Task.findByIdAndUpdate(taskId, { status: 'Completed', completionPercentage: 100, completedDescription, challengesNotes, completedAt: now, $inc: { actualMinutes: durationMinutes } });
   await Bug.updateMany({ taskId }, { $set: { completedAt: now, status: 'Fixed' } });
   await updateDailyWork(employeeId, session.startedAt || session.startTime, durationMinutes, breakMinutes);
+  await recalculateProgress(task.projectId);
   return { task, session };
 };
 

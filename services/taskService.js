@@ -85,6 +85,8 @@ const recalculateProgress = async (projectId) => {
     phase.completionPercentage = percentage;
     phase.status = percentage >= 100 ? "Completed" : percentage > 0 ? "In Progress" : "Planned";
   }
+  const phasePercentages = (project.phases || []).map((phase) => Number(phase.completionPercentage) || 0);
+  project.completionPercentage = phasePercentages.length ? Math.round(phasePercentages.reduce((sum, value) => sum + value, 0) / phasePercentages.length) : 0;
   project.markModified("phases");
   await project.save();
 };
