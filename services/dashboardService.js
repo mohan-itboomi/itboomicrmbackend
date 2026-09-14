@@ -16,7 +16,7 @@ const summary = async date => {
     Project.countDocuments({ isDeleted: false }),
     Project.find({ isDeleted: false, status: 'On Board' }).select('_id name client startDate endDate duration priority status').sort({ endDate: 1, name: 1 }).lean(),
     Task.countDocuments({ isDeleted: false }),
-    Bug.countDocuments({}),
+    Task.countDocuments({ isDeleted: false, category: 'Bug Fixing' }),
     User.find({ isDeleted: false, status: 'Active' }).select('_id name email role').sort({ name: 1 }).lean(),
     DailyWork.aggregate([{ $match: { date: today } }, { $group: { _id: null, minutes: { $sum: '$totalWorkingMinutes' }, taskMinutes: { $sum: '$totalTaskMinutes' } } }]),
     WorkSession.distinct('employeeId', { status: { $in: ['Running', 'Paused'] } }),
