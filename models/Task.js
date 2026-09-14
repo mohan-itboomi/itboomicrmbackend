@@ -19,7 +19,7 @@ const schema = new mongoose.Schema(
     description: { type: String, required: true },
     category: {
       type: String,
-      enum: ["Project Implementation", "Bug Fixing"],
+      enum: ["Project Implementation", "Testing", "Bug Fixing"],
       default: "Project Implementation",
       index: true,
     },

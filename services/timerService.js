@@ -148,6 +148,7 @@ const current = async employeeId => {
     PauseSession.find({ workSessionId: session._id, endTime: { $ne: null } }).select('durationMinutes'),
   ]);
   await session.populate('taskId', 'title projectId');
+  await session.populate('projectId', 'name');
   return {
     session,
     paused: Boolean(pauseSession),
@@ -156,7 +157,7 @@ const current = async employeeId => {
   };
 };
 
-const paused = async employeeId => WorkSession.find({ employeeId, status: 'Paused' }).sort({ updatedAt: -1 }).populate('taskId', 'title projectId');
+const paused = async employeeId => WorkSession.find({ employeeId, status: 'Paused' }).sort({ updatedAt: -1 }).populate('taskId', 'title projectId').populate('projectId', 'name');
 
 const taskHistory = (taskId, employeeId) =>
   WorkSession.find({ taskId, employeeId }).sort({ createdAt: -1 }).populate('employeeId', 'name email');
@@ -191,8 +192,8 @@ const projectSummary = async (projectId, user) => {
   const totals = taskRows.reduce((result, row) => {
     result[row.category] = (result[row.category] || 0) + row.totalMinutes;
     return result;
-  }, { 'Project Implementation': 0, 'Bug Fixing': 0 });
-  return { tasks: taskRows, totals, overall: totals['Project Implementation'] + totals['Bug Fixing'] };
+  }, { 'Project Implementation': 0, Testing: 0, 'Bug Fixing': 0 });
+  return { tasks: taskRows, totals, overall: Object.values(totals).reduce((sum, minutes) => sum + minutes, 0) };
 };
 
 const overview = async user => {

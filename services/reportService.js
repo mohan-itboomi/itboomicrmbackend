@@ -44,7 +44,7 @@ const timesheet = async (query = {}, user) => {
   if (canViewAll(user) && query.employeeId) filter.employeeId = query.employeeId;
   if (!canViewAll(user)) filter.employeeId = user._id;
   if (query.projectId) filter.projectId = query.projectId;
-  const sessions = await WorkSession.find(filter).populate('employeeId', 'name email').populate('taskId', 'title').populate('projectId', 'name').sort({ createdAt: -1 });
+  const sessions = await WorkSession.find(filter).populate('employeeId', 'name email').populate('taskId', 'title category status').populate('projectId', 'name').sort({ createdAt: -1 });
   return addPauseMinutes(sessions);
 };
 const bugAnalytics = async (from, to, projectId, user) => {
