@@ -59,6 +59,20 @@ const deleteModule = async (req, res, next) => {
     next(e);
   }
 };
+const updateProjectModule = async (req, res, next) => {
+  try {
+    const data = await service.updateModuleInProject(req.params.projectId, req.params.id, req.body);
+    if (!data) return res.status(404).json({ success: false, message: "Module not found in project" });
+    res.json({ success: true, message: "Module updated successfully", data });
+  } catch (e) { next(e); }
+};
+const deleteProjectModule = async (req, res, next) => {
+  try {
+    const data = await service.deleteModuleInProject(req.params.projectId, req.params.id, req.user._id);
+    if (!data) return res.status(404).json({ success: false, message: "Module not found in project" });
+    res.json({ success: true, message: "Module deleted successfully", data });
+  } catch (e) { next(e); }
+};
 const createProjectModule = async (req, res, next) => {
   try {
     const data = await service.create({ ...req.body, projectId: req.params.projectId, createdBy: req.user._id });
@@ -74,4 +88,6 @@ module.exports = {
   updateModule,
   deleteModule,
   createProjectModule,
+  updateProjectModule,
+  deleteProjectModule,
 };

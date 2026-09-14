@@ -9,7 +9,7 @@ const normalizeModuleData = (data = {}) => {
 };
 
 const getModules = ({ query = {}, page = 1, limit = 20 }) => {
-	const filter = {};
+	const filter = { isDeleted: { $ne: true } };
 	if (query.search)
 		filter.$or = ["name", "description"].map((key) => ({
 			[key]: { $regex: query.search, $options: "i" },
@@ -30,13 +30,15 @@ const getModules = ({ query = {}, page = 1, limit = 20 }) => {
 		totalPages: Math.ceil(total / limit),
 	}));
 };
-const getModuleById = (id) => Module.findById(id);
+const getModuleById = (id) => Module.findOne({ _id: id, isDeleted: { $ne: true } });
 const createModule = (data) => Module.create(normalizeModuleData(data));
 const updateModule = (id, data) =>
 	Module.findByIdAndUpdate(id, normalizeModuleData(data), {
 		new: true,
 		runValidators: true,
 	});
+const updateModuleInProject = (projectId, id, data) => Module.findOneAndUpdate({ _id: id, projectId, isDeleted: { $ne: true } }, normalizeModuleData(data), { new: true, runValidators: true });
+const deleteModuleInProject = (projectId, id, userId) => Module.findOneAndUpdate({ _id: id, projectId, isDeleted: { $ne: true } }, { isDeleted: true, deletedAt: new Date(), deletedBy: userId }, { new: true });
 const deleteModule = (id, userId) =>
 	Module.findByIdAndUpdate(
 		id,
@@ -48,6 +50,8 @@ module.exports = {
 	getModuleById,
 	createModule,
 	updateModule,
+	updateModuleInProject,
+	deleteModuleInProject,
 	deleteModule,
 	list: getModules,
 	findById: getModuleById,

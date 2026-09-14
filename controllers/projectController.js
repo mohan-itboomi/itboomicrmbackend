@@ -28,7 +28,8 @@ const getProjectById = async (req, res, next) => {
 };
 const createProject = async (req, res, next) => {
   try {
-    const data = await service.create({ ...req.body, createdBy: req.user._id, businessDevelopmentOwner: req.user.role === "bd" ? req.user._id : req.body.businessDevelopmentOwner });
+    const projectCode = req.body.projectCode || await service.generateProjectId();
+    const data = await service.create({ ...req.body, projectCode, createdBy: req.user._id, businessDevelopmentOwner: req.user.role === "bd" ? req.user._id : req.body.businessDevelopmentOwner });
     res
       .status(201)
       .json({ success: true, message: "Project created successfully", data });

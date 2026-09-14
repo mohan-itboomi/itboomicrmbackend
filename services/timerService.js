@@ -1,4 +1,5 @@
 const { Task, Bug, WorkSession, PauseSession, DailyWork } = require('../models');
+const { recalculateProgress } = require('./taskService');
 
 const fail = (message, status = 400) => Object.assign(new Error(message), { status });
 
