@@ -44,8 +44,13 @@ const timesheet = async (query = {}, user) => {
   if (canViewAll(user) && query.employeeId) filter.employeeId = query.employeeId;
   if (!canViewAll(user)) filter.employeeId = user._id;
   if (query.projectId) filter.projectId = query.projectId;
-  const sessions = await WorkSession.find(filter).populate('employeeId', 'name email').populate('taskId', 'title category status').populate('projectId', 'name').sort({ createdAt: -1 });
-  return addPauseMinutes(sessions);
+  const page = Math.max(1, Number(query.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(query.limit) || 20));
+  const [sessions, total] = await Promise.all([
+    WorkSession.find(filter).populate('employeeId', 'name email').populate('taskId', 'title category status').populate('projectId', 'name').sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+    WorkSession.countDocuments(filter),
+  ]);
+  return { items: await addPauseMinutes(sessions), page, limit, total, totalPages: Math.ceil(total / limit) };
 };
 const bugAnalytics = async (from, to, projectId, user) => {
   const createdAt = range(from, to);
